@@ -1,5 +1,6 @@
 package com.example.maverikmovies.service;
 
+import com.example.maverikmovies.exception.ResourceNotFoundException;
 import com.example.maverikmovies.model.Movie;
 import com.example.maverikmovies.repository.MovieRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,12 +26,13 @@ public class MovieService {
 		return this.movieRepository.findAll(pageable);
 	}
 
-	public Optional<Movie> findOneById(Integer id) {
-		return this.movieRepository.findById(id);
+	public Movie findOneById(Integer id) {
+		Optional<Movie> opt = this.movieRepository.findById(id);
+		return opt.orElseThrow(ResourceNotFoundException::new);
 	}
 
-	public void saveMovie(Movie movie) {
-		this.movieRepository.save(movie);
+	public Movie saveMovie(Movie movie) {
+		return this.movieRepository.save(movie);
 	}
 
 	public void saveMovies(List<Movie> movies) {
@@ -39,6 +41,19 @@ public class MovieService {
 
 	public void deleteMovie(Integer id) {
 		this.movieRepository.deleteById(id);
+	}
+
+	public Movie updateMovie(Integer id, Movie source) {
+		Movie target = this.movieRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Movie with id does not exist"));
+		target.setTitle(source.getTitle());
+		target.setActors(source.getActors());
+		target.setGenre(source.getGenre());
+		target.setYear(source.getYear());
+		target.setRated(source.getRated());
+		target.setReleased(source.getReleased());
+		target.setImdbRating(source.getImdbRating());
+		return this.movieRepository.save(target);
 	}
 
 }
