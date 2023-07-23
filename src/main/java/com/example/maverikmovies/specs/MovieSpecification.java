@@ -1,17 +1,25 @@
 package com.example.maverikmovies.specs;
 
 import com.example.maverikmovies.model.Movie;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
+import org.springframework.data.jpa.domain.Specification;
 
-public class MovieSpecification  {
+public interface MovieSpecification {
 
-
-	public static Predicate withField(CriteriaBuilder cb, Root<Movie> root, String field, String value) {
-		return cb.equal(root.get(field), value);
+	static Specification<Movie> imdbIdLike(String imdbId) {
+		return (movie, cq, cb) -> cb.like(cb.lower(movie.get("imdbId")), "%" + imdbId.toLowerCase() + "%");
 	}
 
+	static Specification<Movie> actorsLike(String actors) {
+		return (movie, cq, cb) -> cb.like(cb.lower(movie.get("actors")), "%" + actors.toLowerCase() + "%");
+	}
+
+	static Specification<Movie> genreLike(String genre) {
+		return (movie, cq, cb) -> cb.like(cb.lower(movie.get("genre")), "%" + genre.toLowerCase() + "%");
+	}
+
+	static Specification<Movie> titleLike(String title) {
+		return (movie, cq, cb) -> cb.like(cb.lower(movie.get("title")), "%" + title.toLowerCase() + "%");
+	}
 
 
 }

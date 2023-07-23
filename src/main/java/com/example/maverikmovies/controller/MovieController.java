@@ -4,6 +4,8 @@ import com.example.maverikmovies.model.Movie;
 import com.example.maverikmovies.service.LoadService;
 import com.example.maverikmovies.service.MovieService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,17 +32,12 @@ public class MovieController {
 				.build();
 	}
 
-//	@GetMapping()
-//	public ResponseEntity<Page<Movie>> search(
-//			@RequestParam("imdbId") String imdbId,
-//			@RequestParam("title") String title,
-//			@RequestParam("actors") String actors,
-//			@RequestParam("genre") String genre
-//	) {
-//
-//		this.movieService.search(imdbId, title, actors, genre)
-//
-//	}
+	@PostMapping("/search")
+	public ResponseEntity<Page<Movie>> search(Pageable pageable,
+											  @RequestBody Movie searchCriteria) {
+		Page<Movie> moviePage = this.movieService.search(pageable, searchCriteria);
+		return ResponseEntity.ok(moviePage);
+	}
 
 	@GetMapping("/{id}")
 	public ResponseEntity<Movie> findOne(@PathVariable("id") Integer movieId) {
